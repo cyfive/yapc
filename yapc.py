@@ -1,4 +1,4 @@
-#!/env python3
+#!/bin/env python3
 
 '''
  Yet Another Photo Catalog
@@ -7,9 +7,7 @@
 
 '''
 import sys, os, exifread, stat
-
 from getopt import getopt, GetoptError
-# from datetime import date
 from datetime import datetime
 import shutil
 
@@ -44,7 +42,7 @@ def print_help():
 def parse_args():
     global DO_ACTION, ACTION_NONE, ACTION_CREATE, ACTION_ADD, ACTION_IMPORT, always_yes, clean_source, ACTION_PARAMS, CATALOG_PATH
 
-    exit_status = True;
+    exit_status = True
 
     try:
         opts, args = getopt(sys.argv[1:], "hca:i:dy", ["help", "create", "add=", "import=", "del", "yes", ])
@@ -117,16 +115,24 @@ def add_to_catalog(p_catalog, p_path):
         img = open(p_path, 'rb')
         exif_tags = exifread.process_file(img)
         img.close()
+        date_original = ''
         try:
             date_original = str(exif_tags['EXIF DateTimeOriginal'])
             date_original = date_original.split(sep=' ')[0]
         except KeyError:
+            pass
+        
+        if not date_original.strip():
             file_attr = os.stat(p_path)
             if stat.S_ISREG(file_attr.st_mode):
                 date_original = datetime.fromtimestamp(file_attr.st_ctime)
                 date_original = date_original.strftime('%Y:%m:%d')
         
-        year, month, day = date_original.split(':')
+        print(date_original)
+        if date_original != '':
+            year, month, day = date_original.split(':')
+        else:
+            print(p_path)
                         
         # copy_path = os.path.join(p_catalog, year, month, day, os.path.basename(p_path))
         copy_path = os.path.join(p_catalog, year, month, day)
