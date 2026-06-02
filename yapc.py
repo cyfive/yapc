@@ -10,11 +10,12 @@ import os
 import stat
 import shutil
 from datetime import datetime
+from typing import Optional
 import exifread
 import click
 
 
-def is_catalog(p_path):
+def is_catalog(p_path: str) -> bool:
     if not os.path.isdir(p_path):
         return False
     if os.path.isfile(os.path.join(p_path, ".yapc")):
@@ -23,7 +24,7 @@ def is_catalog(p_path):
         return False
 
 
-def create_catalog(p_path):
+def create_catalog(p_path: str) -> Optional[bool]:
     if is_catalog(p_path):
         click.echo(f"Path {p_path} already yet another photo catalog!")
         return False
@@ -37,7 +38,7 @@ def create_catalog(p_path):
         return False
 
 
-def get_photo_date(p_path):
+def get_photo_date(p_path: str) -> str:
     """Extract date from EXIF or fallback to file creation time."""
     date_original = ''
     
@@ -60,7 +61,7 @@ def get_photo_date(p_path):
     return date_original
 
 
-def add_to_catalog(p_catalog, p_path, clean_source=False, always_yes=False):
+def add_to_catalog(p_catalog: str, p_path: str, clean_source: bool = False, always_yes: bool = False) -> Optional[bool]:
     if not is_catalog(p_catalog):
         click.echo(f"{p_path} not yet another photo catalog")
         return False
@@ -99,7 +100,7 @@ def add_to_catalog(p_catalog, p_path, clean_source=False, always_yes=False):
         import_to_catalog(p_catalog, p_path, clean_source, always_yes)
 
 
-def import_to_catalog(p_catalog, p_path, clean_source=False, always_yes=False):
+def import_to_catalog(p_catalog: str, p_path: str, clean_source: bool = False, always_yes: bool = False) -> None:
     if os.path.isdir(p_path):
         file_list = os.listdir(path=p_path)
         for file_name in file_list:
@@ -114,14 +115,14 @@ def import_to_catalog(p_catalog, p_path, clean_source=False, always_yes=False):
 
 @click.group()
 @click.version_option(version='0.1-alpha', prog_name='yapc')
-def cli():
+def cli() -> None:
     """Yet Another Photo Catalog - Organize photos by EXIF capture date."""
     pass
 
 
 @cli.command()
 @click.argument('catalog_path', type=click.Path())
-def create(catalog_path):
+def create(catalog_path: str) -> None:
     """Create a new photo catalog at CATALOG_PATH."""
     create_catalog(catalog_path)
 
@@ -131,7 +132,7 @@ def create(catalog_path):
 @click.argument('file_path', type=click.Path())
 @click.option('-d', '--del', 'clean_source', is_flag=True, help='Delete source file after adding')
 @click.option('-y', '--yes', 'always_yes', is_flag=True, help='Answer yes to all prompts')
-def add(catalog_path, file_path, clean_source, always_yes):
+def add(catalog_path: str, file_path: str, clean_source: bool, always_yes: bool) -> None:
     """Add a photo file to the catalog."""
     add_to_catalog(catalog_path, file_path, clean_source, always_yes)
 
@@ -141,7 +142,7 @@ def add(catalog_path, file_path, clean_source, always_yes):
 @click.argument('folder_path', type=click.Path())
 @click.option('-d', '--del', 'clean_source', is_flag=True, help='Delete source files after importing')
 @click.option('-y', '--yes', 'always_yes', is_flag=True, help='Answer yes to all prompts')
-def import_photos(catalog_path, folder_path, clean_source, always_yes):
+def import_photos(catalog_path: str, folder_path: str, clean_source: bool, always_yes: bool) -> None:
     """Import photos from a folder into the catalog."""
     import_to_catalog(catalog_path, folder_path, clean_source, always_yes)
 

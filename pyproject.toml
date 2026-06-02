@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "yapc"
+version = "0.1-alpha"
+description = "Yet Another Photo Catalog - Organize photos by EXIF capture date"
+authors = ["Stanislav V. Emets <emetssv@mail.ru>"]
+license = "GPL-3.0-or-later"
+homepage = "http://cyfive.ru/yapc"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+exifread = "*"
+click = "*"
+
+[tool.poetry.scripts]
+yapc = "yapc:cli"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
